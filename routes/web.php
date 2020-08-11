@@ -10,5 +10,8 @@ Route::get('/', function () {
 Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
-Route::get('/tracking', [\App\Http\Controllers\TrackingController::class, 'index'])->name('traking');
-Route::get('/tracking2', [\App\Http\Controllers\TrackingController::class, 'index2'])->name('traking2');
+
+Route::get(
+    '/tracking',
+    [\App\Http\Controllers\TrackingController::class, 'index']
+)->name('traking');

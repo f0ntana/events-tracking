@@ -6,39 +6,30 @@ use GuzzleHttp\Client;
 
 class TrackingService
 {
-    private $url = 'https://www2.correios.com.br/sistemas/rastreamento/resultado_semcontent.cfm';
+    private $objectNumber;
 
-    public function handle(array $params)
+    private $url = 'http://webservice.correios.com.br/service/rastro/Rastro.wsdl';
+
+    private $defaultParams = [
+        'usuario' => 'ECT',
+        'senha' => 'SRO',
+        'tipo' => 'L',
+        'resultado' => 'T',
+        'lingua' => '101'
+    ];
+
+    public function setObjectNumber(string $objectNumber)
     {
-        $array = ['Objetos' => $params['object']];
-
-        $client = new Client();
-        $result = $client->request('POST', $this->url, [
-            'form_params' => $array
-        ]);
-
-        $body = $result->getBody()->getContents();
-
-        dd($body);
+        $this->objectNumber =  strtoupper($objectNumber);
     }
 
-    public function handle2(array $params)
+    public function handle()
     {
-        $post = array('Objetos' => $params['object']);
+        $params = array_merge(['objetos' => $this->objectNumber], $this->defaultParams);
 
-        $client = new Client();
+        $this->soapRastro = new \SoapClient($this->url);
 
-        // iniciar CURL
-        $ch = curl_init();
-        // informar URL e outras funções ao CURL
-        curl_setopt($ch, CURLOPT_URL, "https://www2.correios.com.br/sistemas/rastreamento/resultado_semcontent.cfm");
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($post));
-        // Acessar a URL e retornar a saída
-        $output = curl_exec($ch);
-        // liberar
-        curl_close($ch);
-        // Imprimir a saída
-        echo $output;
+        $buscaEventos = $this->soapRastro->buscaEventos($params);
+        dd($buscaEventos);
     }
 }
