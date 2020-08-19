@@ -7,6 +7,11 @@ use Illuminate\Http\Request;
 
 class EventController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+
     public function index()
     {
         $events = Event::all();
@@ -21,9 +26,7 @@ class EventController extends Controller
 
     public function store(Request $request)
     {
-        dd($request->all());
         Event::create($request->all());
-
         return redirect()->route('events.index');
     }
 
@@ -31,5 +34,18 @@ class EventController extends Controller
     {
         $recurrencies = Event::RECURRENCIES;
         return view('events.form', compact('recurrencies', 'event'));
+    }
+
+    public function update(Request $request, Event $event)
+    {
+        $event->update($request->all());
+        $event->save();
+        return redirect()->route('events.index');
+    }
+
+    public function destroy(Event $event)
+    {
+        $event->delete();
+        return redirect()->route('events.index');
     }
 }

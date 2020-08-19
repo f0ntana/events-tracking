@@ -31,10 +31,17 @@
                                     <td>{{ $event->date->format('d/m/Y') }}</td>
                                     <td>{{ $event->recurrencyName }}</td>
                                     <td>{{ $event->active ? 'Sim' : 'Não' }}</td>
-                                    <td>
-                                        <a class="btn btn-warning" href="{{ route('events.edit', $event->id) }}">
+                                    <td class="d-flex flex-direction-row justify-content-around">
+                                        <a class="btn btn-sm btn-info" href="{{ route('events.edit', $event->id) }}">
                                             Editar
                                         </a>
+                                        <form action="{{ route('events.destroy', $event->id) }}" method="POST">
+                                            @csrf
+                                            @method('delete')
+                                            <button class="btn btn-sm btn-danger">
+                                                Deletar
+                                            </button>
+                                        </form>
                                     </td>
                                 </tr>
                             @endforeach

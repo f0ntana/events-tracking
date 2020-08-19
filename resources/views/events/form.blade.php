@@ -15,7 +15,8 @@
                 </div>
                 <div class="card-body">
                     @if(isset($event))
-                    <form action="{{ route('events.update', $event->id) }}" method="PUT">
+                    <form action="{{ route('events.update', $event->id) }}" method="POST">
+                        @method('put')
                     @else
                     <form action="{{ route('events.store') }}" method="POST">
                     @endif
@@ -57,10 +58,10 @@
                             </div>
                             <div class="col-4">
                                 <div class="form-group">
-                                    <label for="event-active">Ativo = {{$event->active}}</label>
+                                    <label for="event-active">Ativo</label>
                                     <select name="active" class="form-control">
-                                        <option value="1" {{ (isset($event) && $event->active == 1) ? 'selected' : '' }}">Sim</option>
-                                        <option value="0" {{ (isset($event) && $event->active == 0) ? 'selectec' : '' }}">Não</option>
+                                        <option value="1" {{ (isset($event) && $event->active == 1) ? 'selected' : '' }}>Sim</option>
+                                        <option value="0" {{ (isset($event) && $event->active == 0) ? 'selected' : '' }}>Não</option>
                                     </select>
                                 </div>
                             </div>

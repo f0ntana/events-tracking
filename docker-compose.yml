@@ -2,78 +2,83 @@
 version: "3"
 
 #volumes
-volumes: 
-    # Mysql Data
-    mysql-data:
-    # Redis Data
-    redis-data:
-    # .config
-    dot-config:
-    # .local
-    dot-local:
-    # .cache
-    dot-cache:
-    # .composer
-    dot-composer:
+volumes:
+  # Mysql Data
+  mysql-data:
+  # Redis Data
+  redis-data:
+  # .config
+  dot-config:
+  # .local
+  dot-local:
+  # .cache
+  dot-cache:
+  # .composer
+  dot-composer:
 
 #services
 services:
-    mysql:
-        image: mysql
-        container_name: project_mysql
-        restart: unless-stopped
-        volumes:
-            - mysql-data:/var/lib/mysql
-        ports:
-            - 3306:3306
-        environment: 
-            - MYSQL_ROOT_PASSWORD=project123
-            - MYSQL_DATABASE=project
-            - MYSQL_USER=project
-            - MYSQL_PASSWORD=project
-    cache:
-        image: redis:6.0-alpine
-        container_name: project_cache
-        restart: unless-stopped
-        volumes: 
-            - redis-data:/data
-        ports:
-            - 6379:6379
-    app:
-        image: ambientum/php:7.4-nginx
-        container_name: project_app
-        restart: unless-stopped
-        environment: 
-            - XDEBUG_ENABLED=false
-            - PHP_IDE_CONFIG=serverName=ambientum
-        volumes:
-            - .:/var/www/app
-            - dot-config:/home/ambientum/.config
-            - dot-local:/home/ambientum/.local
-            - dot-cache:/home/ambientum/.cache
-            - dot-composer:/home/ambientum/.composer
-        ports:
-            - 80:8080
-            - 443:8083
-        links:
-            - mysql
-            - cache
-    queue:
-        image: ambientum/php:7.4
-        container_name: project_queue
-        restart: unless-stopped
-        command: php artisan horizon
-        volumes: 
-            - .:/var/www/app
-        links: 
-            - mysql
-            - cache
-
-        
-
-
-        
-
-
-
-    
+  mysql:
+    image: mysql:5.7
+    container_name: project_mysql
+    restart: unless-stopped
+    volumes:
+      - mysql-data:/var/lib/mysql
+    ports:
+      - 3306:3306
+    environment:
+      - MYSQL_ROOT_PASSWORD=project123
+      - MYSQL_DATABASE=project
+      - MYSQL_USER=project
+      - MYSQL_PASSWORD=project
+  cache:
+    image: redis:4.0-alpine
+    container_name: project_cache
+    restart: unless-stopped
+    volumes:
+      - redis-data:/data
+    ports:
+      - 6379:6379
+  app:
+    image: ambientum/php:7.4-nginx
+    container_name: project_app
+    restart: unless-stopped
+    environment:
+      - XDEBUG_ENABLED=false
+      - PHP_IDE_CONFIG=serverName=ambientum
+    volumes:
+      - .:/var/www/app
+      - dot-config:/home/ambientum/.config
+      - dot-local:/home/ambientum/.local
+      - dot-cache:/home/ambientum/.cache
+      - dot-composer:/home/ambientum/.composer
+    ports:
+      - 80:8080
+      - 443:8083
+    links:
+      - mysql
+      - cache
+  queue:
+    image: ambientum/php:7.4
+    container_name: project_queue
+    restart: unless-stopped
+    command: php artisan horizon
+    volumes:
+      - .:/var/www/app
+    links:
+      - mysql
+      - cache
+  scheduler:
+    image: hamidparvez/laravel-docker
+    container_name: project_scheduler
+    restart: unless-stopped
+    volumes:
+      - .:/var/www/app
+    environment:
+      APP_ENV: local
+      CONTAINER_ROLE: scheduler
+      APP_PATH: /var/www/app
+    links:
+      - mysql
+      - cache
+      - queue
