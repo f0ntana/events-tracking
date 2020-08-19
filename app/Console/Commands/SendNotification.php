@@ -47,6 +47,10 @@ class SendNotification extends Command
 
         $user = User::first();
 
+        if ($events->count() === 0) {
+            return 0;
+        }
+
         Mail::to($user->email)
             ->send(new NotificationEvent($events));
 
