@@ -49,4 +49,10 @@ class Event extends Model
                 break;
         }
     }
+
+    public function updateDate()
+    {
+        $this->date = $this->getNextDateAttribute();
+        $this->save();
+    }
 }

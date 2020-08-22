@@ -55,8 +55,7 @@ class SendNotification extends Command
             ->send(new NotificationEvent($events));
 
         foreach ($events as $event) {
-            $event->date = $event->nextDate;
-            $event->save();
+            $event->updateDate();
         }
 
         return 0;
